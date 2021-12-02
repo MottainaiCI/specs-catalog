@@ -1,0 +1,30 @@
+# Author: Daniele Rondina <geaaru@gmail.com>
+# Task Cleane
+name: "Maintenance - Clean old tasks/pipeline"
+image: "alpine/edge"
+
+# The mcli storage contains a script that initialize the Mottainai profile
+# used to call Mottainai API.
+storage: "mcli"
+storage_path: "confs"
+source: "https://github.com/MottainaiCI/specs-catalog.git"
+directory: "/tasks/infra"
+script:
+- sleep 1
+- >-
+  wget https://raw.githubusercontent.com/geaaru/luet/geaaru/contrib/config/get_luet_root.sh -O /tmp/get_luet_root.sh &&
+  sh /tmp/get_luet_root.sh
+- luet install --sync-repos dev-util/mottainai-cli
+- mkdir -p /root/.config/
+- sh confs/setup-mcli.sh
+- echo "=================================================================="
+- export MOTTAINAI_CLI_PROFILE=funtoo
+- echo "Clean old tasks:"
+- scripts/tasks_cleaner.sh
+- echo "=================================================================="
+planned: "@daily"
+environment:
+- RETENTION_PERIOD=15
+- LC_ALL=en_US.UTF-8
+- LUET_YES=true
+type: lxd
