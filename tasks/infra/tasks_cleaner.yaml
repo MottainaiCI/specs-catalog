@@ -7,19 +7,24 @@ image: "alpine/edge"
 # used to call Mottainai API.
 storage: "mcli"
 storage_path: "confs"
+entrypoint:
+- /bin/sh
+- "-c"
 source: "https://github.com/MottainaiCI/specs-catalog.git"
 directory: "/tasks/infra"
 script:
 - sleep 1
+- apk add curl bash python3
 - >-
   wget https://raw.githubusercontent.com/geaaru/luet/geaaru/contrib/config/get_luet_root.sh -O /tmp/get_luet_root.sh &&
   sh /tmp/get_luet_root.sh
-- luet install --sync-repos dev-util/mottainai-cli
+- luet install --sync-repos dev-util/mottainai-cli utils/jq
 - mkdir -p /root/.config/
-- sh confs/setup-mcli.sh
+- /bin/bash confs/setup-mcli.sh
 - echo "=================================================================="
 - export MOTTAINAI_CLI_PROFILE=funtoo
 - echo "Clean old tasks:"
+- ln -s /usr/bin/python3 /usr/bin/python
 - scripts/tasks_cleaner.sh
 - echo "=================================================================="
 planned: "@daily"
@@ -27,4 +32,6 @@ environment:
 - RETENTION_PERIOD=15
 - LC_ALL=en_US.UTF-8
 - LUET_YES=true
+- LUET_LOGGING__COLOR=false
+- LUET_LOGGING__EMOJI=false
 type: lxd
