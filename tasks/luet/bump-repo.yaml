@@ -1,0 +1,33 @@
+# Author: Daniele Rondina <geaaru@gmail.com>
+# Description: This task permits to bump a new revision
+#              of a repository available to a Mottainai
+#              namespace.
+
+name: "Luet RhOS Funtoo Repo - Bump revision"
+script:
+- apk add make bash curl
+- >-
+  wget https://raw.githubusercontent.com/geaaru/luet/geaaru/contrib/config/get_luet_root.sh -O /tmp/get_luet_root.sh &&
+  sh /tmp/get_luet_root.sh
+- make create-repo
+entrypoint:
+- /bin/sh
+- "-c"
+environment:
+- "SUDO="
+- LUET_SYSTEM__TMPDIR_BASE=/luettmp
+- LUET_YES=true
+- COMPRESSION=zstd
+- "BUILD_ARGS=--config conf/luet.yaml"
+image: alpine/edge
+source: https://github.com/geaaru/luet-funtoo.git
+artefact_path: build
+type: lxd
+directory: /
+namespace: "rhos-funtoo"
+namespace_filters:
+- ".*metadata.yaml$"
+- "repository.yaml$"
+- "repository.meta.yaml.tar.zst$"
+publish_mode: append
+tag_namespace: "rhos-funtoo"
