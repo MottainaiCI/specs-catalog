@@ -44,5 +44,5 @@ namespace_filters:
 - ".*metadata.yaml$"
 - "repository.yaml$"
 - "repository.meta.yaml.tar.zst$"
-#publish_mode: append
-#tag_namespace: "rhos-funtoo"
+publish_mode: append
+tag_namespace: "rhos-funtoo"
