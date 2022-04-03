@@ -7,6 +7,7 @@ set -e
 DEBUG=${DEBUG:-0}
 # Define retention period in days. Default 120 days
 RETENTION_PERIOD=${RETENTION_PERIOD:-120}
+MAXPAGESIZE=${MAXPAGESIZE:-10000}
 REMOVE_STRANGE_TASKS=${REMOVE_STRANGE_TASKS:-0}
 
 clean_pipelines () {
@@ -65,7 +66,7 @@ clean_tasks () {
   local days=""
 
   echo "Searching for old task to remove..."
-  local tasks_list=$(mottainai-cli task list --page-size 1000 -j | jq '.tasks[]' | jq '.ID + "-" + .created_time' -r)
+  local tasks_list=$(mottainai-cli task list --page-size ${MAXPAGESIZE} -j | jq '.tasks[]' | jq '.ID + "-" + .created_time' -r)
   for i in ${tasks_list} ; do
     taskid=""
     tdate=""
