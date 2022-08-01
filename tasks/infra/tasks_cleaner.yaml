@@ -24,7 +24,6 @@ script:
 - echo "=================================================================="
 - export MOTTAINAI_CLI_PROFILE=funtoo
 - echo "Clean old tasks:"
-- ln -s /usr/bin/python3 /usr/bin/python
 - scripts/tasks_cleaner.sh
 - echo "=================================================================="
 planned: "@daily"
