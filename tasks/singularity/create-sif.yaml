@@ -1,0 +1,52 @@
+# Author: Daniele Rondina <geaaru@gmail.com>
+# Description: This task permits to create the SIF image
+#              of the Funtoo rootfs and push it
+#              to the namespace funtoo-sifs
+
+name: "Singularity :: Create Funtoo SIFs image"
+script:
+- >-
+  luet repo update &&
+  luet i
+  sys-apps/portage
+  sys-apps/baselayout
+  sys-cluster/singularity
+  app-arch/tar
+  net-misc/wget
+  dev-libs/libpcre2
+  dev-libs/openssl
+  virtual/base
+  app-misc/ca-certificates &&
+  luet cleanup --purge-repos &&
+  env-update &&
+  ldconfig &&
+  source /etc/profile
+# Download the stage3 tarball
+- wget ${FUNTOO_SERVER}/${FUNTOO_TARBALL}
+# Prepare the sandbox
+- >-
+  mkdir ${SANDBOX_DIR} &&
+  cd ${SANDBOX_DIR} &&
+  tar xJf ../${FUNTOO_TARBALL} &&
+  mkdir -p .singularity.d/ &&
+  echo "#!/bin/bash" > .singularity.d/runscript &&
+  echo "/bin/bash" >> .singularity.d/runscript &&
+  chmod 0755 .singularity.d/runscript
+# Build the SIF image
+- >-
+  cd .. &&
+  singularity build funtoo-stage3-latest.sif ${SANDBOX_DIR}
+# Move the SIF image to artifacts dir
+- mv funtoo-stage3-latest.sif /image/
+environment:
+- "SUDO="
+- LUET_SYSTEM__TMPDIR_BASE=/luettmp
+- LUET_YES=true
+- FUNTOO_SERVER=https://build.funtoo.org/1.4-release-std/x86-64bit/generic_64/
+- FUNTOO_TARBALL=stage3-latest.tar.xz
+- SANDBOX_DIR=rootfs
+image: macaroni/funtoo-minimal-devel
+artefact_path: /image
+type: lxd
+directory: /
+tag_namespace: "funtoo-sifs"
