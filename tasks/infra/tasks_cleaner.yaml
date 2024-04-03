@@ -14,7 +14,7 @@ source: "https://github.com/MottainaiCI/specs-catalog.git"
 directory: "/tasks/infra"
 script:
 - sleep 1
-- anise install --sync-repos dev-util/mottainai-cli utils/jq python
+- anise install --sync-repos dev-util/mottainai-cli utils/jq dev-lang-3.9/python
 - mkdir -p /root/.config/
 - /bin/bash confs/setup-mcli.sh
 - echo "=================================================================="
