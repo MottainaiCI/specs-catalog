@@ -1,7 +1,7 @@
 # Author: Daniele Rondina <geaaru@gmail.com>
 # Task Cleane
 name: "Maintenance - Clean old tasks/pipeline"
-image: "alpine/edge"
+image: "macaroni/terragon-minimal"
 
 # The mcli storage contains a script that initialize the Mottainai profile
 # used to call Mottainai API.
@@ -14,11 +14,7 @@ source: "https://github.com/MottainaiCI/specs-catalog.git"
 directory: "/tasks/infra"
 script:
 - sleep 1
-- apk add curl bash python3
-- >-
-  wget https://raw.githubusercontent.com/geaaru/luet/geaaru/contrib/config/get_luet_root.sh -O /tmp/get_luet_root.sh &&
-  sh /tmp/get_luet_root.sh
-- luet install --sync-repos dev-util/mottainai-cli utils/jq
+- anise install --sync-repos dev-util/mottainai-cli utils/jq python
 - mkdir -p /root/.config/
 - /bin/bash confs/setup-mcli.sh
 - echo "=================================================================="
@@ -28,7 +24,7 @@ script:
 - echo "=================================================================="
 planned: "@daily"
 environment:
-- RETENTION_PERIOD=15
+- RETENTION_PERIOD=5
 - LC_ALL=en_US.UTF-8
 - LUET_YES=true
 - LUET_LOGGING__COLOR=false
